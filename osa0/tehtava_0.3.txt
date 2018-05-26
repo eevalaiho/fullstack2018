@@ -1,0 +1,30 @@
+title 0.3 muistiinpanojen sivu
+
+kayttaja->selain:
+note left of selain
+käyttäjä kirjottaa osoiteriville
+https://fullstack-exampleapp.herokuapp.com/notes
+end note
+
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/notes
+note left of palvelin
+  muodostetaan HTML missä olemassaolevien
+  muistiinpanojen luettelo ja lomake uuden
+  muistiinpanon tallentamiseen
+end note
+palvelin->selain: status 200, sivun HTML-koodi
+
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/main.js
+palvelin->selain: status 200, javascript
+
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/main.css
+palvelin->selain: status 200, css
+
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/data.json
+palvelin->selain: status 200, muistiinpanot json-muodossa
+
+note left of selain
+ selain näyttää palvelimen palauttaman HTML:n
+ johon on injektoitu data.json tiedostossa olevat
+ muistiinpanot
+end note

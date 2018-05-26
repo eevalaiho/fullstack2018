@@ -1,0 +1,19 @@
+title 0.6 Uusi muistiinpano SPA:ssa
+
+kayttaja->selain:
+note left of selain
+käyttäjä kirjottaa tekstilaatikkoon muistiinpanon
+ja klikkaa Talleta-painiketta
+end note
+
+selain->palvelin: POST fullstack-exampleapp.herokuapp.com/new_note_spa
+note left of palvelin
+ injektoidaan uusi listaelementti luettelon loppun
+end note
+palvelin->selain: status 201 created, uusi muistiinpano json-muodossa
+
+note left of selain
+ selain näyttää palvelimen palauttaman HTML:n
+ johon on lisätty uusi muistiinpano
+end note
+

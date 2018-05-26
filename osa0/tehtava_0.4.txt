@@ -1,0 +1,34 @@
+title 0.4 Uusi muistiinpano
+
+kayttaja->selain:
+note left of selain
+käyttäjä kirjottaa tekstilaatikkoon muistiinpanon
+ja klikkaa Talleta-painiketta
+end note
+
+selain->palvelin: POST fullstack-exampleapp.herokuapp.com/new_note
+note left of palvelin
+  uudelleenohjataan selain osoitteeseen /notes
+end note
+palvelin->selain: status 302 found, location /notes
+
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/notes
+palvelin->selain: status 304 unmodified, sivun HTML-koodi
+
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/main.js
+palvelin->selain: status 304 unmodified, javascript
+
+selain->palvelin: GET fullstack-exampleapp.herokuapp.com/data.json
+note left of palvelin
+  muodostetaan HTML missä olemassaolevien
+  muistiinpanojen luettelo ja lomake uuden
+  muistiinpanon tallentamiseen
+end note
+palvelin->selain: status 200 ok, muistiinpanot json-muodossa
+
+note left of selain
+ selain näyttää palvelimen palauttaman HTML:n
+ johon on injektoitu data.json tiedostossa olevat
+ päivittyneet muistiinpanot
+end note
+
