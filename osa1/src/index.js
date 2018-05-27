@@ -2,28 +2,37 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 const App = () => {
-    const kurssi = 'Half Stack -sovelluskehitys'
-    const osa1 = 'Reactin perusteet'
-    const tehtavia1 = 10
-    const osa2 = 'Tiedonvälitys propseilla'
-    const tehtavia2 = 7
-    const osa3 = 'Komponenttien tila'
-    const tehtavia3 = 14
+    const kurssi = {
+        nimi: 'Half Stack -sovelluskehitys',
+        osat: [
+            {
+                nimi: 'Reactin perusteet',
+                tehtavia: 10
+            },
+            {
+                nimi: 'Tiedonvälitys propseilla',
+                tehtavia: 7
+            },
+            {
+                nimi: 'Komponenttien tila',
+                tehtavia: 14
+            }
+        ]
+    }
 
     return (
         <div>
-            <Otsikko kurssi={kurssi} />
-            <Sisalto osa1={osa1} tehtavia1={tehtavia1} osa2={osa2} tehtavia2={tehtavia2} osa3={osa3} tehtavia3={tehtavia3}/>
-            <Yhteensa tehtavia_arr={[tehtavia1, tehtavia2, tehtavia3]} />
+            <Otsikko nimi={kurssi.nimi} />
+            <Sisalto osat={kurssi.osat} />
+            <Yhteensa osat={kurssi.osat} />
         </div>
     )
 }
 
 const Yhteensa = (props) => {
-    const arr = props.tehtavia_arr
-    var summa = 0
-    arr.forEach((tehtavia) => {
-        summa += tehtavia
+    let summa = 0
+    props.osat.forEach((osa) => {
+        summa += osa.tehtavia
     })
     return (
         <p>Yhteensä {summa} tehtävää</p>
@@ -32,23 +41,19 @@ const Yhteensa = (props) => {
 
 const Sisalto = (props) => {
     return (
-        <div>
-            <Osa osa={props.osa1} tehtavia={props.tehtavia1} />
-            <Osa osa={props.osa2} tehtavia={props.tehtavia2} />
-            <Osa osa={props.osa3} tehtavia={props.tehtavia3} />
-        </div>
+        props.osat.map((osa) => <Osa osa={osa} />)
     )
-}
+};
 
 const Osa = (props) => {
     return (
-        <p>{props.osa} {props.tehtavia}</p>
+        <p>{props.osa.nimi} {props.osa.tehtavia}</p>
     )
 }
 
 const Otsikko = (props) => {
     return (
-        <h1>{props.kurssi}</h1>
+        <h1>{props.nimi}</h1>
     )
 }
 
