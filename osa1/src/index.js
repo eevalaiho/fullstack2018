@@ -5,60 +5,58 @@ class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            hyva: 0,
+            hyvä: 0,
             neutraali: 0,
-            huono: 0
+            huono: 0,
+            summa: 0,
+            lkm: 0,
         }
     }
 
     klik = (props) => {
         this.setState({
-            [props.key]: this.state[props.key] + 1
+            [props.key]: this.state[props.key]+1,
+            lkm: this.state.lkm+1,
+            summa: this.state.summa + (props.key === 'hyvä' ? 1 : (props.key === 'huono' ? -1 : 0))
         })
+        console.log(this.state)
     }
 
     render() {
-        const keys = Object.keys(this.state)
-        const buttons = (keys) => {
-            return (
-                keys.map((key) => <input key={key} type='button' value={key} onClick={() => this.klik({key})}/>)
+
+        const button = (key) => <input key={key} type='button' value={key} onClick={() => this.klik({key})}/>
+
+        const buttons = () => ['hyvä','neutraali','huono'].map((key) => button(key))
+
+        const statistic = (name, value) => {
+            return(
+                <p key={name}>{name}: {value}</p>
             )
         }
-        const statistics = (keys) => {
+
+        const statistics = () => {
+            if (this.state.lkm <= 0)
+                return ('Ei yhtään palautetta annettu')
+            let stats = {
+                'hyvä': this.state.hyvä,
+                'neutraali': this.state.neutraali,
+                'huono': this.state.huono,
+            }
+            if (this.state.lkm > 0) {
+                stats['keskiarvo'] = (this.state.lkm > 0 ? (this.state.summa / this.state.lkm).toFixed(1) : '0.0')
+                stats['positiivisia'] = (this.state.lkm > 0 ? (100 * this.state.hyvä / this.state.lkm).toFixed(1) + '%' : '0.0%')
+            }
             return (
-                keys.map((k, i) => {
-                    return (<p key={i}>{k}: {this.state[k]}</p>)})
-            )
-        }
-        const summary = (keys) => {
-            let lkm = 0
-            let summa = 0
-            let lkmPos = 0
-            keys.forEach((k) => {
-                console.log(k+'')
-                lkm += this.state[k]
-                switch(k+'') {
-                    case 'hyva':
-                        summa += this.state[k]
-                        lkmPos += this.state[k]
-                        break;
-                    case 'huono':
-                        summa -= this.state[k]
-                        break;
-                    default: break;
-                }
-                console.log(lkmPos)
-            })
-            return (
-                <p>Keskiarvo: {lkm > 0 ? (summa/lkm).toFixed(1) : '0.0'}, Positiivisia: {lkm > 0 ? (100*lkmPos/lkm).toFixed(1) + '%': '0.0%'}</p>
+                Object.entries(stats)
+                    .map( ([key, value]) => statistic(key, value))
             )
         }
         return (
             <div>
                 <h1>Anna palautetta</h1>
-                <div>{buttons(keys)}</div>
+                <div>{buttons()}</div>
                 <h1>Statistiikka</h1>
-                <div>{statistics(keys)} {summary(keys)}</div>
+                <div>{statistics()}</div>
             </div>
         )
     }
