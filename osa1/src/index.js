@@ -19,7 +19,6 @@ class App extends React.Component {
             lkm: this.state.lkm+1,
             summa: this.state.summa + (props.key === 'hyvä' ? 1 : (props.key === 'huono' ? -1 : 0))
         })
-        console.log(this.state)
     }
 
     render() {
@@ -30,7 +29,7 @@ class App extends React.Component {
 
         const statistic = (name, value) => {
             return(
-                <p key={name}>{name}: {value}</p>
+                <tr key={name}><td>{name}</td><td>{value}</td></tr>
             )
         }
 
@@ -47,8 +46,12 @@ class App extends React.Component {
                 stats['positiivisia'] = (this.state.lkm > 0 ? (100 * this.state.hyvä / this.state.lkm).toFixed(1) + '%' : '0.0%')
             }
             return (
-                Object.entries(stats)
-                    .map( ([key, value]) => statistic(key, value))
+                <table>
+                    <tbody>
+                        {Object.entries(stats)
+                            .map( ([key, value]) => statistic(key, value))}
+                    </tbody>
+                </table>
             )
         }
         return (
