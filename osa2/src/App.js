@@ -1,16 +1,9 @@
 import React from 'react'
-import Otsikko from './components/Otsikko'
-import Sisalto from './components/Sisalto'
-import Yhteensa from './components/Yhteensa'
+import Kurssit from './components/Kurssit'
 
-const App = ({ kurssi }) => {
-
+const App = ({ kurssit }) => {
     return (
-        <div>
-            <Otsikko kurssi={kurssi}/>
-            <Sisalto kurssi={kurssi} />
-            <Yhteensa kurssi={kurssi} />
-        </div>
+        <Kurssit kurssit={kurssit} />
     )
 }
 

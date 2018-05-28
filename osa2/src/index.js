@@ -2,34 +2,47 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
 
-
-const kurssi = {
-    nimi: 'Half Stack -sovelluskehitys',
-    osat: [
-        {
-            id: 1,
-            nimi: 'Reactin perusteet',
-            tehtavia: 10
-        },
-        {
-            id: 2,
-            nimi: 'Tiedonvälitys propseilla',
-            tehtavia: 7
-        },
-        {
-            id: 3,
-            nimi: 'Komponenttien tila',
-            tehtavia: 14
-        },
-        {
-            id: 4,
-            nimi: 'Riippuvuuksien hallinta',
-            tehtavia: 12
-        }
-    ]
-}
+const kurssit = [
+    {
+        nimi: 'Half Stack -sovelluskehitys',
+        id: 1,
+        osat: [
+            {
+                nimi: 'Reactin perusteet',
+                tehtavia: 10,
+                id: 1
+            },
+            {
+                nimi: 'Tiedonvälitys propseilla',
+                tehtavia: 7,
+                id: 2
+            },
+            {
+                nimi: 'Komponenttien tila',
+                tehtavia: 14,
+                id: 3
+            }
+        ]
+    },
+    {
+        nimi: 'Node.js',
+        id: 2,
+        osat: [
+            {
+                nimi: 'Routing',
+                tehtavia: 3,
+                id: 1
+            },
+            {
+                nimi: 'Middlewaret',
+                tehtavia: 7,
+                id: 2
+            }
+        ]
+    }
+]
 
 ReactDOM.render(
-    <App kurssi={kurssi} />,
+    <App kurssit={kurssit} />,
     document.getElementById('root')
 )
