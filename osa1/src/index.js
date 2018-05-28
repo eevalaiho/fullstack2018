@@ -69,26 +69,70 @@ class App2 extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            selected: 0
+            votes: [0, 0, 0, 0, 0, 0],
+            selected: 0,
+            maxvotes: 0,
+            maxvotesid: -1
         }
     }
 
-    klik = () => {
-        let i = Math.floor(Math.random() * 6)
-        console.log(i)
+    another = () => {
         this.setState({
-            selected: i
+            selected: Math.floor(Math.random() * 6)
         })
     }
 
+    vote = (i) => {
+        let votes = this.state.votes
+        votes[i]++
+        this.setState({
+            votes: votes
+        })
+        if (this.state.votes[i] > this.state.maxvotes) {
+            this.setState({
+                maxvotes: this.state.votes[i],
+                maxvotesid: i
+            })
+        }
+        console.log(this.state)
+    }
 
     render() {
+        const voteform = () => {
+            return (
+                <div>
+                    <p>{this.state.selected}: {anecdotes[this.state.selected]}</p>
+                    <p>Has {this.state.votes[this.state.selected]} votes</p>
+                    <input type='button' value='Another anecdote' onClick={() => this.another()} />
+                    <input type='button' value='Vote' onClick={() => this.vote(this.state.selected)} />
+                </div>
+            )}
+
+        const statistics = () => {
+            return (
+                <div>
+                    <p>{anecdotes[this.state.maxvotesid]}</p>
+                    <p>Votes: {this.state.maxvotes}</p>
+                </div>
+            )}
+
+        if (this.state.maxvotesid >= 0) {
         return (
             <div>
-                {anecdotes[this.state.selected]}<br />
-                <input type='button' value='Uusi anekdootti' onClick={() => this.klik()} />
+                <h1>Vote for and anecdote</h1>
+                {voteform()}
+                <h1>Anecdote with most votes:</h1>
+                {statistics()}
             </div>
-        )
+        )}
+        else {
+            return (
+                <div>
+                    <h1>Vote for and anecdote</h1>
+                    {voteform()}
+                </div>
+            )
+        }
     }
 }
 
