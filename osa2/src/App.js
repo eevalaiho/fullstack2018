@@ -1,6 +1,7 @@
 import React from 'react'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 
 import personService from './services/persons'
 
@@ -11,7 +12,8 @@ class App extends React.Component {
             persons: [],
             newName: '',
             newNumber: '',
-            filter: ''
+            filter: '',
+            message: null
         }
     }
     componentDidMount() {
@@ -60,7 +62,15 @@ class App extends React.Component {
                                 .sort((p1, p2) => p1.name > p2.name),
                             filter: '',
                             newName: '',
-                            newNumber: ''
+                            newNumber: '',
+                            message: 'Lisättiin ' + personObject.name
+                        })
+                    })
+                    .catch(error => {
+                        alert(`Henkilö '${personObject.name}' on jo valitettavasti poistettu palvelimelta`)
+                        this.setState({
+                            persons: this.state.persons
+                                .filter((person) => person.id !== personObject.id)
                         })
                     })
             }
@@ -77,16 +87,20 @@ class App extends React.Component {
                         persons: this.state.persons.concat(response.data),
                         filter: '',
                         newName: '',
-                        newNumber: ''
+                        newNumber: '',
+                        message: 'Päivitettiin ' + personObject.name
                     })
                 })
         }
-
+        setTimeout(() => {
+            this.setState({message: null})
+        }, 5000)
     }
     render() {
         return (
             <div>
-                <h2>Puhelinluettelo</h2>
+                <h1>Puhelinluettelo</h1>
+                <Notification message={this.state.message} />
                 <Filter filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
                 <h2>Lisää uusi</h2>
                 <form onSubmit={this.addPerson}>
