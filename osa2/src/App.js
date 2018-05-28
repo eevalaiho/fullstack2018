@@ -31,20 +31,20 @@ class App extends React.Component {
             }
             else if (arr.length === 1) {
                 const country = arr[0]
-                console.log(country)
+                //console.log(country)
                 return(
                     <div>
                         <h1>{country.name}</h1>
                         <p>Capital: {country.capital}</p>
                         <p>Population: {country.population}</p>
-                        <p><img src={country.flag} width={200}/></p>
+                        <p><img src={country.flag} width={200} alt={country.name}/></p>
                     </div>
                 )
             }
             else if (arr.length < 10) {
                 return(
                     <ul>
-                        {arr.map((country) => <li>{country.name}</li>)}
+                        {arr.map((country) => <li key={country.name}>{country.name}</li>)}
                     </ul>
                 )
             }
