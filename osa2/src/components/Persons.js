@@ -7,7 +7,7 @@ const Persons = ({persons, filter, deletePerson}) => {
                 .filter((person) => person.name.toLowerCase().startsWith(filter.toLowerCase()))
                 .map((person) => {
                     return (
-                        <p key={person.name}>
+                        <p key={person.id}>
                             {person.name}, {person.number} <button id={person.id} onClick={() => deletePerson(person.id)}>Poista</button>
                         </p>
                     )
