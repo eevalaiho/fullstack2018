@@ -10,6 +10,10 @@ class App extends React.Component {
             filter: ''
         }
     }
+    handleCountrySelect = (event) => {
+        console.log(event.target.innerHTML)
+        this.setState({ filter: event.target.innerHTML })
+    }
     handleFilterChange = (event) => {
         this.setState({ filter: event.target.value })
     }
@@ -44,7 +48,8 @@ class App extends React.Component {
             else if (arr.length < 10) {
                 return(
                     <ul>
-                        {arr.map((country) => <li key={country.name}>{country.name}</li>)}
+                        {arr.map((country) =>
+                            <li key={country.name} onClick={this.handleCountrySelect}>{country.name}</li>)}
                     </ul>
                 )
             }
