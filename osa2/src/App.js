@@ -1,67 +1,121 @@
 import React from 'react'
+import Persons from './components/Persons'
+import Filter from './components/Filter'
+import Notification from './components/Notification'
 
-import countryService from './services/countries'
+import personService from './services/persons'
 
 class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            countries: [],
-            filter: ''
+            persons: [],
+            newName: '',
+            newNumber: '',
+            filter: '',
+            message: null
         }
     }
-    handleCountrySelect = (event) => {
-        console.log(event.target.innerHTML)
-        this.setState({ filter: event.target.innerHTML })
+    componentDidMount() {
+        personService
+            .getAll()
+            .then(response => {
+                this.setState({ persons: response.data })
+            })
     }
     handleFilterChange = (event) => {
         this.setState({ filter: event.target.value })
     }
-    componentDidMount() {
-        countryService
-            .getAll()
-            .then(response => {
-                this.setState({ countries: response.data })
-            })
+    handleNameChange = (event) => {
+        this.setState({ newName: event.target.value })
+    }
+    handleNumberChange = (event) => {
+        this.setState({ newNumber: event.target.value })
+    }
+    deletePerson = (id) => {
+        let person = this.state.persons.filter((person) => person.id === id)[0]
+        if (person && window.confirm("Poistetaanko " + person.name + "?")) {
+            personService
+                .remove(id)
+                .then(
+                    this.setState({
+                        persons: this.state.persons.filter((person) => person.id !== id)
+                    })
+                )
+        }
+    }
+    addPerson = (event) => {
+        event.preventDefault()
+        let personObject = this.state.persons
+            .filter((person) => person.name === this.state.newName)[0]
+        if (personObject)
+        {
+            if (window.confirm(personObject.name + " on jo luettelossa, korvataako vanha numero uudella?")) {
+                personObject.number = this.state.newNumber
+                personService
+                    .update(personObject.id, personObject)
+                    .then(response => {
+                        this.setState({
+                            persons: this.state.persons
+                                .filter((person) => person.name !== personObject.name)
+                                .concat(response.data)
+                                .sort((p1, p2) => p1.name > p2.name),
+                            filter: '',
+                            newName: '',
+                            newNumber: '',
+                            message: 'Lisättiin ' + personObject.name
+                        })
+                    })
+                    .catch(error => {
+                        alert(`Henkilö '${personObject.name}' on jo valitettavasti poistettu palvelimelta`)
+                        this.setState({
+                            persons: this.state.persons
+                                .filter((person) => person.id !== personObject.id)
+                        })
+                    })
+            }
+        }
+        else {
+            personObject = {
+                name: this.state.newName,
+                number: this.state.newNumber
+            }
+            personService
+                .create(personObject)
+                .then(response => {
+                    this.setState({
+                        persons: this.state.persons.concat(response.data),
+                        filter: '',
+                        newName: '',
+                        newNumber: '',
+                        message: 'Päivitettiin ' + personObject.name
+                    })
+                })
+        }
+        setTimeout(() => {
+            this.setState({message: null})
+        }, 5000)
     }
     render() {
-        const countryList = () => {
-            let arr = this.state.countries
-                .filter((country) => country.name.toLowerCase().startsWith(this.state.filter.toLowerCase()))
-            if (arr.length === 0) {
-                return(
-                    <p>No matches</p>
-                )
-            }
-            else if (arr.length === 1) {
-                const country = arr[0]
-                //console.log(country)
-                return(
-                    <div>
-                        <h1>{country.name}</h1>
-                        <p>Capital: {country.capital}</p>
-                        <p>Population: {country.population}</p>
-                        <p><img src={country.flag} width={200} alt={country.name}/></p>
-                    </div>
-                )
-            }
-            else if (arr.length < 10) {
-                return(
-                    <ul>
-                        {arr.map((country) =>
-                            <li key={country.name} onClick={this.handleCountrySelect}>{country.name}</li>)}
-                    </ul>
-                )
-            }
-            return(
-                <p>Over 10 matches</p>
-            )
-        }
         return (
             <div>
-                <h1>World countries</h1>
-                <p>Find countries: <input value={this.state.filter}  onChange={this.handleFilterChange}/></p>
-                {countryList()}
+                <h1>Puhelinluettelo</h1>
+                <Notification message={this.state.message} />
+                <Filter filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
+                <h2>Lisää uusi</h2>
+                <form onSubmit={this.addPerson}>
+                    <div>
+                        Nimi: <input value={this.state.newName} onChange={this.handleNameChange}/>
+                    </div>
+                    <div>
+                        Numero: <input value={this.state.newNumber} onChange={this.handleNumberChange}/>
+                    </div>
+                    <div>
+                        <button type="submit">lisää</button>
+                    </div>
+                </form>
+                <h2>Numerot</h2>
+                <Persons persons={this.state.persons} filter={this.state.filter} deletePerson={this.deletePerson} />
             </div>
         )
     }
