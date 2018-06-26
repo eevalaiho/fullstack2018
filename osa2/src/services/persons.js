@@ -1,5 +1,6 @@
 import axios from 'axios'
-const baseUrl = 'https://fstck-puhelinluettelo.herokuapp.com/api/persons'
+//const baseUrl = 'https://fstck-puhelinluettelo.herokuapp.com/api/persons'
+const baseUrl = 'http://localhost:3001/api/persons'
 
 const getAll = () => {
     return axios.get(baseUrl)
