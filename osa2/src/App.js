@@ -13,7 +13,8 @@ class App extends React.Component {
             newName: '',
             newNumber: '',
             filter: '',
-            message: null
+            message: null,
+            error: null
         }
     }
     componentDidMount() {
@@ -47,14 +48,15 @@ class App extends React.Component {
     addPerson = (event) => {
         event.preventDefault()
         let personObject = this.state.persons
-            .filter((person) => person.name === this.state.newName)[0]
-        if (personObject)
-        {
-            if (window.confirm(personObject.name + " on jo luettelossa, korvataako vanha numero uudella?")) {
+            .filter((person) => person.name.toLowerCase() === this.state.newName.toLowerCase())[0]
+        if (personObject) {
+            if (window.confirm(this.state.newName + " on jo luettelossa, korvataako vanha numero uudella?"))  {
+                personObject.name = this.state.newName
                 personObject.number = this.state.newNumber
                 personService
                     .update(personObject.id, personObject)
                     .then(response => {
+                        //console.log("App.js ln 59:", response.data)
                         this.setState({
                             persons: this.state.persons
                                 .filter((person) => person.name !== personObject.name)
@@ -63,15 +65,17 @@ class App extends React.Component {
                             filter: '',
                             newName: '',
                             newNumber: '',
-                            message: 'Lisättiin ' + personObject.name
+                            message: 'Päivitettiin ' + personObject.name
                         })
                     })
                     .catch(error => {
-                        alert(`Henkilö '${personObject.name}' on jo valitettavasti poistettu palvelimelta`)
+                        //console.log("App.js ln 73", error)
                         this.setState({
-                            persons: this.state.persons
-                                .filter((person) => person.id !== personObject.id)
+                            error: `Henkilö '${personObject.name}' on jo valitettavasti poistettu palvelimelta`,
                         })
+                        setTimeout(() => {
+                            this.setState({error: null})
+                        }, 5000)
                     })
             }
         }
@@ -88,7 +92,7 @@ class App extends React.Component {
                         filter: '',
                         newName: '',
                         newNumber: '',
-                        message: 'Päivitettiin ' + personObject.name
+                        message: 'Lisättiin ' + personObject.name
                     })
                 })
         }
@@ -100,6 +104,7 @@ class App extends React.Component {
         return (
             <div>
                 <h1>Puhelinluettelo</h1>
+                <Notification message={this.state.error}/>
                 <Notification message={this.state.message} />
                 <Filter filter={this.state.filter} onFilterChange={this.handleFilterChange}/>
                 <h2>Lisää uusi</h2>
