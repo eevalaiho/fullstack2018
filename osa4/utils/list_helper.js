@@ -31,9 +31,35 @@ const mostBlogs = (blogs) => {
   return topauthor
 }
 
+
+const mostLikes = (blogs) => {
+  if (!blogs || blogs.length === 0)
+    return null
+
+  let _ = require('lodash')
+  //let blogs_by_author = _.groupBy(blogs, blog => blog.author)
+
+  let author_counts = _.chain(blogs)
+    .groupBy('author')
+    .map((authors_blogs, author) => ({
+      'author': author,
+      'likes': _.sumBy(authors_blogs, 'likes'),
+    }))
+    .value()
+
+  let top = { 'author':null,'likes':0 }
+  author_counts.forEach(function(item) {
+    if (item.likes > top.likes)
+      top = item
+  })
+
+  return top
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
