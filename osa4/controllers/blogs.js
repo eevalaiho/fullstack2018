@@ -20,13 +20,11 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.get('/:id', async (request, response) => {
   try {
     const blog = await Blog.findById(request.params.id)
-
     if (blog) {
       response.json(formatBlog(blog))
     } else {
       response.status(404).end()
     }
-
   } catch (exception) {
     console.log(exception)
     response.status(400).send({ error: 'malformatted id' })
@@ -35,9 +33,11 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
   try {
-    await Blog.findByIdAndRemove(request.params.id)
-
-    response.status(204).end()
+    const result = await Blog.findByIdAndRemove(request.params.id)
+    if (result)
+      response.status(204).json(result).end()
+    else
+      response.status(404).end()
   } catch (exception) {
     console.log(exception)
     response.status(400).send({ error: 'malformatted id' })
@@ -60,6 +60,30 @@ blogsRouter.post('/', async (request, response) => {
     })
 
     const savedBlog = await blog.save()
+    response.status(201).json(savedBlog)
+  }
+  catch (exception) {
+    console.log(exception)
+    response.status(500).json({ error: 'something went wrong...' })
+  }
+})
+
+blogsRouter.put('/:id', async (request, response) => {
+  try {
+    if (request.body.title === undefined)
+      return response.status(400).json({error: 'title missing'})
+
+    if (request.body.url === undefined)
+      return response.status(400).json({error: 'url missing'})
+
+    const blog = {
+      author: request.body.author,
+      title: request.body.title,
+      url: request.body.url,
+      likes: request.body.likes === undefined ? 0 : request.body.likes
+    }
+
+    const savedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
     response.status(201).json(savedBlog)
   }
   catch (exception) {

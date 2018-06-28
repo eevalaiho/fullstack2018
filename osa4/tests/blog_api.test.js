@@ -115,7 +115,7 @@ describe('when there is initially some notes saved', async () => {
       expect(blogsAfter.length).toBe(blogsBefore.length)
     })
 
-    test('blog without likes gets a like value 0', async () => {
+    test('POST /api/blogs blog without likes gets a like value 0', async () => {
       const newBlog = {
         title: 'React patterns, Part III',
         author: 'Michael Chan and Chris Cross',
@@ -128,6 +128,37 @@ describe('when there is initially some notes saved', async () => {
         .expect(201)
 
       expect(response.body.likes).toBe(0)
+    })
+  })
+
+  describe('deletion of blog', async () => {
+
+    test('204 returned by DELETE /api/blogs/:id with existing id', async () => {
+      const blogsBefore = await blogsInDb()
+      const existingId = blogsBefore[0].id
+
+      await api
+        .delete(`/api/blogs/${existingId}`)
+        .expect(204)
+
+      const blogsAfter = await blogsInDb()
+      expect(blogsAfter.length + 1).toBe(blogsBefore.length)
+    })
+
+    test('404 returned by DELETE /api/blogs/:id with valid nonexisting id', async () => {
+      const validNonexistingId = await nonExistingId()
+
+      await api
+        .delete(`/api/blogs/${validNonexistingId}`)
+        .expect(404)
+    })
+
+    test('400 returned by DELETE /api/blogs/:id with invalid id', async () => {
+      const invalidId = '5a3d5da59070081a82a3445'
+
+      await api
+        .delete(`/api/blogs/${invalidId}`)
+        .expect(400)
     })
   })
 
