@@ -4,16 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "watch": "nodemon index.js",
-    "lint": "eslint .; exit 0",
-    "test": "jest --verbose; exit 0"
+    "start": "NODE_ENV=production node index.js",
+    "watch": "NODE_ENV=development nodemon index.js",
+    "test": "NODE_ENV=test jest --verbose; exit 0",
+    "lint": "eslint .; exit 0"
   },
   "author": "Eeva-Maria Laiho",
   "license": "MIT",
   "devDependencies": {
     "jest": "^23.2.0",
-    "nodemon": "^1.17.5"
+    "nodemon": "^1.17.5",
+    "supertest": "^3.1.0"
   },
   "dependencies": {
     "cors": "^2.8.4",
