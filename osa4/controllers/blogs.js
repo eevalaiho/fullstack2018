@@ -3,22 +3,12 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 
 blogsRouter.get('/', async (request, response) => {
-  await Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs)
-    })
-    .catch(error => {
-      console.log(error)
-      response.status(500).json({ error: error })
-    })
+  const blogs = await Blog.find({})
+  response.json(blogs)
 })
 
 blogsRouter.post('/', async (request, response) => {
   try {
-    if (request.body.author === undefined)
-      return response.status(400).json({error: 'author missing'})
-
     if (request.body.title === undefined)
       return response.status(400).json({error: 'title missing'})
 
@@ -32,7 +22,7 @@ blogsRouter.post('/', async (request, response) => {
       likes: request.body.likes === undefined ? 0 : request.body.likes
     })
 
-    const savedBlog = blog.save()
+    const savedBlog = await blog.save()
     response.status(201).json(savedBlog)
   }
   catch (exception) {

@@ -56,7 +56,6 @@ const initialBlogs = [
 
 beforeAll(async () => {
   await Blog.remove({})
-
   const blogObjs = initialBlogs.map(blog => new Blog(blog))
   const promiseArray = blogObjs.map(blog => blog.save())
   await Promise.all(promiseArray)
@@ -107,8 +106,9 @@ test('a valid blog can be added ', async () => {
   expect(title).toContain('React patterns, Part II')
 })
 
-test('blog without author, title and url is not added ', async () => {
+test('blog without title and url is not added ', async () => {
   const newBlog = {
+    author: 'New Author',
     likes: 1
   }
 
@@ -126,7 +126,20 @@ test('blog without author, title and url is not added ', async () => {
   expect(response.body.length).toBe(existingBlogs.body.length)
 })
 
+test('blog without likes gets a like value 0', async () => {
+  const newBlog = {
+    title: 'React patterns, Part III',
+    author: 'Michael Chan and Chris Cross',
+    url: 'https://reactpatterns.com/'
+  }
 
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+
+  expect(response.body.likes).toBe(0)
+})
 
 afterAll(() => {
   server.close()

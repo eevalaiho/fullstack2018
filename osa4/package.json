@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production node index.js",
-    "watch": "NODE_ENV=development nodemon index.js",
+    "start": "NODE_ENV=production; node index.js",
+    "watch": "NODE_ENV=development; nodemon index.js",
     "test": "NODE_ENV=test jest --verbose; exit 0",
     "lint": "eslint .; exit 0"
   },
