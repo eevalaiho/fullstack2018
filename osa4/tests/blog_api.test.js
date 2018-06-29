@@ -6,7 +6,6 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const { initialBlogs, nonExistingId, blogsInDb, usersInDb } = require('./test_helper')
 
-
 beforeAll(async () => {
   await Blog.remove({})
 
@@ -19,7 +18,7 @@ beforeAll(async () => {
   await Promise.all(objs.map(obj => obj.save()))
 })
 
-describe('when there is initially some blogs saved', async () => {
+describe.only('when there is initially some blogs saved', async () => {
 
   test('all blogs are returned as json gy GET /api/blogs', async () => {
     const blogsInDatabase = await blogsInDb()
@@ -39,16 +38,16 @@ describe('when there is initially some blogs saved', async () => {
 
   test('individual blogs are returned as json by GET /api/blogs/:id', async () => {
     const blogsInDatabase = await blogsInDb()
-    const aBlog = blogsInDatabase[0]
+    const blog = blogsInDatabase[0]
 
     const response = await api
-      .get(`/api/blogs/${aBlog.id}`)
+      .get(`/api/blogs/${blog.id}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    expect(response.body.title).toBe(aBlog.title)
-    expect(response.body.author).toBe(aBlog.author)
-    expect(response.body.url).toBe(aBlog.url)
+    expect(response.body.title).toBe(blog.title)
+    expect(response.body.author).toBe(blog.author)
+    expect(response.body.url).toBe(blog.url)
   })
 
   test('404 returned by GET /api/blogs/:id with nonexisting valid id', async () => {

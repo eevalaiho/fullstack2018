@@ -13,6 +13,7 @@ blogSchema.statics.format = function(obj) {
   return {
     title: obj.title,
     author: obj.author,
+    url: obj.url,
     likes: obj.likes,
     user: obj.user
   }

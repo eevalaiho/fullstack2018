@@ -60,32 +60,33 @@ const nonExistingId = async () => {
   return blog._id.toString()
 }
 
-const formatBlog = (blog) => {
+const formatBlog = (obj) => {
   return {
-    title: blog.title,
-    author: blog.author,
-    url: blog.url,
-    likes: blog.likes,
-    id: blog._id
+    title: obj.title,
+    author: obj.author,
+    url: obj.url,
+    likes: obj.likes,
+    user: obj.user
   }
 }
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
-  return blogs.map(formatBlog)
+  return blogs
 }
 
 const formatUser = (user) => {
   return {
     username: user.username,
     name: user.name,
+    adult: user.adult,
     blogs: user.blogs
   }
 }
 
 const usersInDb = async () => {
   const users = await User.find({})
-  return users.map(formatUser)
+  return users
 }
 
 module.exports = {
