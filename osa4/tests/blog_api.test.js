@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt')
 const { app, server } = require('../index')
 const supertest = require('supertest')
 const api = supertest(app)
@@ -7,15 +8,20 @@ const User = require('../models/user')
 const { initialBlogs, nonExistingId, blogsInDb, usersInDb } = require('./test_helper')
 
 beforeAll(async () => {
-  await Blog.remove({})
-
-  const blogObjs = initialBlogs.map(blog => new Blog(blog))
-  await Promise.all(blogObjs.map(blog => blog.save()))
 
   await User.remove({})
-
-  let objs = [{ username:'root',password:'salainen' }].map(obj => new User(obj))
+  const passwordHash = await bcrypt.hash('salainen', 10)
+  let objs = [{
+    username:'root',
+    name:'Root User',
+    passwordHash,
+    adult:true
+  }].map(obj => new User(obj))
   await Promise.all(objs.map(obj => obj.save()))
+
+  await Blog.remove({})
+  const blogObjs = initialBlogs.map(blog => new Blog(blog))
+  await Promise.all(blogObjs.map(blog => blog.save()))
 })
 
 describe.only('when there is initially some blogs saved', async () => {

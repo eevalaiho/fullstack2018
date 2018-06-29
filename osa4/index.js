@@ -21,8 +21,10 @@ app.use(bodyParser.json())
 const middleware = require('./utils/middleware')
 app.use(middleware.logger)
 
+const loginRouter = require('./controllers/login')
 const blogsRouter = require('./controllers/blogs')
 const usersRouter = require('./controllers/users')
+app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 
