@@ -20,6 +20,7 @@ app.use(bodyParser.json())
 
 const middleware = require('./utils/middleware')
 app.use(middleware.logger)
+app.use(middleware.extractToken)
 
 const loginRouter = require('./controllers/login')
 const blogsRouter = require('./controllers/blogs')

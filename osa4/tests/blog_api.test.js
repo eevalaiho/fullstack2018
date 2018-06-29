@@ -81,6 +81,14 @@ describe.only('when there is initially some blogs saved', async () => {
     expect(title).toContain('Canonical string reduction')
   })
 
+  const getRootLoginToken = async () => {
+    const response = await api
+      .post('/api/login')
+      .send({ username:'root',password:'salainen' })
+
+    return response.body.token
+  }
+
   describe('addition of a new blog', async () => {
 
     test('POST /api/blogs succeeds with valida data', async () => {
@@ -93,8 +101,10 @@ describe.only('when there is initially some blogs saved', async () => {
         likes: 12
       }
 
+      const token = await getRootLoginToken()
       await api
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -119,8 +129,11 @@ describe.only('when there is initially some blogs saved', async () => {
 
       const blogsBefore = await blogsInDb()
 
+      const token = await getRootLoginToken()
+
       await api
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
         .send(newBlog)
         .expect(400)
 
@@ -136,8 +149,11 @@ describe.only('when there is initially some blogs saved', async () => {
         url: 'https://reactpatterns.com/'
       }
 
+      const token = await getRootLoginToken()
+
       const response = await api
         .post('/api/blogs')
+        .set('Authorization', 'bearer ' + token)
         .send(newBlog)
         .expect(201)
 
@@ -149,10 +165,13 @@ describe.only('when there is initially some blogs saved', async () => {
 
     test('204 returned by DELETE /api/blogs/:id with existing id', async () => {
       const blogsBefore = await blogsInDb()
-      const existingId = blogsBefore[0].id
+      const existingId = blogsBefore[blogsBefore.length-1].id
+
+      const token = await getRootLoginToken()
 
       await api
         .delete(`/api/blogs/${existingId}`)
+        .set('Authorization', 'bearer ' + token)
         .expect(204)
 
       const blogsAfter = await blogsInDb()
@@ -162,16 +181,22 @@ describe.only('when there is initially some blogs saved', async () => {
     test('404 returned by DELETE /api/blogs/:id with valid nonexisting id', async () => {
       const validNonexistingId = await nonExistingId()
 
+      const token = await getRootLoginToken()
+
       await api
         .delete(`/api/blogs/${validNonexistingId}`)
+        .set('Authorization', 'bearer ' + token)
         .expect(404)
     })
 
     test('400 returned by DELETE /api/blogs/:id with invalid id', async () => {
       const invalidId = '5a3d5da59070081a82a3445'
 
+      const token = await getRootLoginToken()
+
       await api
         .delete(`/api/blogs/${invalidId}`)
+        .set('Authorization', 'bearer ' + token)
         .expect(400)
     })
   })
