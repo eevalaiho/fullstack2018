@@ -1,13 +1,8 @@
-const http = require('http')
 const express = require('express')
 const app = express()
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const mongoose = require('mongoose')
-const blogsRouter = require('./controllers/blogs')
-const middleware = require('./utils/middleware')
-const config = require('./utils/config')
 
+const config = require('./utils/config')
+const mongoose = require('mongoose')
 mongoose
   .connect(config.mongoUrl)
   .then( () => {
@@ -17,12 +12,23 @@ mongoose
     console.log(err)
   })
 
+const cors = require('cors')
 app.use(cors())
+
+const bodyParser = require('body-parser')
 app.use(bodyParser.json())
+
+const middleware = require('./utils/middleware')
 app.use(middleware.logger)
+
+const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
+
 app.use(middleware.error)
 
+const http = require('http')
 const server = http.createServer(app)
 server.listen(config.port, () => {
   console.log(`Server running on port ${config.port}`)
@@ -34,10 +40,3 @@ server.on('close', () => {
 module.exports = {
   app, server
 }
-
-/*
-const PORT = config.port
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
-*/

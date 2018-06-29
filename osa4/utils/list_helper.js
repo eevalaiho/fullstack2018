@@ -1,5 +1,3 @@
-
-
 const dummy = (blogs) => {
   return blogs ? 1 : 1
 }
@@ -30,7 +28,6 @@ const mostBlogs = (blogs) => {
   }
   return topauthor
 }
-
 
 const mostLikes = (blogs) => {
   if (!blogs || blogs.length === 0)

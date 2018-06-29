@@ -1,16 +1,25 @@
-const supertest = require('supertest')
 const { app, server } = require('../index')
+const supertest = require('supertest')
 const api = supertest(app)
+
 const Blog = require('../models/blog')
-const { format, initialBlogs, nonExistingId, blogsInDb } = require('./test_helper')
+const User = require('../models/user')
+const { initialBlogs, nonExistingId, blogsInDb, usersInDb } = require('./test_helper')
 
-describe('when there is initially some notes saved', async () => {
 
-  beforeAll(async () => {
-    await Blog.remove({})
-    const blogObjs = initialBlogs.map(blog => new Blog(blog))
-    await Promise.all(blogObjs.map(blog => blog.save()))
-  })
+beforeAll(async () => {
+  await Blog.remove({})
+
+  const blogObjs = initialBlogs.map(blog => new Blog(blog))
+  await Promise.all(blogObjs.map(blog => blog.save()))
+
+  await User.remove({})
+
+  let objs = [{ username:'root',password:'salainen' }].map(obj => new User(obj))
+  await Promise.all(objs.map(obj => obj.save()))
+})
+
+describe('when there is initially some blogs saved', async () => {
 
   test('all blogs are returned as json gy GET /api/blogs', async () => {
     const blogsInDatabase = await blogsInDb()
@@ -162,8 +171,105 @@ describe('when there is initially some notes saved', async () => {
     })
   })
 
-  afterAll(() => {
-    server.close()
+})
+
+describe('when there is initially one user saved', async () => {
+
+  test('all users are returned as json gy GET /api/users', async () => {
+    const usersBefore = await usersInDb()
+
+    const response = await api
+      .get('/api/users')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.length).toBe(usersBefore.length)
+
+    const usernames = response.body.map(n => n.username)
+    usersBefore.forEach(user => {
+      expect(usernames).toContain(user.username)
+    })
   })
 
+  describe('addition of a new user', async () => {
+
+    test('POST /api/users succeeds with valid data', async (done) => {
+      const usersBefore = await usersInDb()
+
+      const newUser = {
+        username: 'fanny',
+        password: 'salainen'
+      }
+
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      const response = await api
+        .get('/api/users')
+
+      const usersAfter = await usersInDb()
+      expect(usersAfter.length).toBe(usersBefore.length + 1)
+
+      //const usernames = response.body.map(r => r.username)
+      //expect(usernames).toContain('fanny')
+
+      done()
+    }, 5000)
+
+    test('POST /api/users fails with proper statuscode if username is missing ', async () => {
+      const newUser = {
+        password: 'salainen'
+      }
+      const usersBefore = await usersInDb()
+
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+
+      const usersAfter = await usersInDb()
+
+      expect(usersAfter.length).toBe(usersBefore.length)
+    })
+
+    test('POST /api/users fails with proper statuscode if password is missing', async () => {
+      const newUser = {
+        username: 'annie',
+      }
+      const usersBefore = await usersInDb()
+
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+
+      const usersAfter = await usersInDb()
+
+      expect(usersAfter.length).toBe(usersBefore.length)
+    })
+
+    test('POST /api/users fails with proper statuscode if password is less that 3 characters', async () => {
+      const newUser = {
+        username: 'annie',
+        password: 'sa'
+      }
+      const usersBefore = await usersInDb()
+
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+
+      const usersAfter = await usersInDb()
+
+      expect(usersAfter.length).toBe(usersBefore.length)
+    })
+  })
+})
+
+afterAll(() => {
+  server.close()
 })
