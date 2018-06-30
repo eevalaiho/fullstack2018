@@ -64,19 +64,21 @@ blogRouter.post('/', async (request, response) => {
     if (!token || !decodedToken.id)
       return response.status(401).json({ error: 'token missing or invalid' })
 
-    if (request.body.title === undefined)
+    const { title, author, url, likes } = request.body
+
+    if (title === undefined || title.length === 0)
       return response.status(400).json({ error: 'title missing' })
 
-    if (request.body.url === undefined)
+    if (url === undefined || url.length === 0)
       return response.status(400).json({ error: 'url missing' })
 
     const user = await User.findById(decodedToken.id)
 
     const blog = await new Blog({
-      author: request.body.author,
-      title: request.body.title,
-      url: request.body.url,
-      likes: request.body.likes === undefined ? 0 : request.body.likes,
+      author: author,
+      title: title,
+      url: url,
+      likes: likes === undefined ? 0 : likes,
       user: user._id
     })
 

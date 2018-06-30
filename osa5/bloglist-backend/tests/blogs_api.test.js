@@ -16,6 +16,11 @@ beforeAll(async () => {
     name:'Root User',
     passwordHash,
     adult:true
+  },{
+    username:'lina',
+    name:'Lina Laine',
+    passwordHash,
+    adult:true
   }].map(obj => new User(obj))
   await Promise.all(objs.map(obj => obj.save()))
 
