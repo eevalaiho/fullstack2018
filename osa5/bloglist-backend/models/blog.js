@@ -11,6 +11,7 @@ const blogSchema = new Schema({
 
 blogSchema.statics.format = function(obj) {
   return {
+    _id: obj._id,
     title: obj.title,
     author: obj.author,
     url: obj.url,

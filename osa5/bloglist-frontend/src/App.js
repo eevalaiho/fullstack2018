@@ -70,15 +70,6 @@ class App extends React.Component {
     this.componentDidMount()
   }
 
-  togglelogin = async (event) => {
-    event.preventDefault()
-    event.target.innerHTML = !this.state.login_visible ? 'Cancel' : 'Show log in'
-    this.setState({
-      login_visible: !this.state.login_visible,
-    })
-    this.render()
-  }
-
   createBlog = async (event) => {
     event.preventDefault()
     try{
@@ -124,8 +115,6 @@ class App extends React.Component {
   render() {
 
     const loginForm = () => {
-      const hideWhenVisible = {display: this.state.login_visible ? 'none' : ''}
-      const showWhenVisible = {display: this.state.login_visible ? '' : 'none'}
       return (
         <Togglable buttonLabel="Log in" >
           <LoginForm
@@ -163,7 +152,10 @@ class App extends React.Component {
     const blogList = () => (
       <div>
         <h2>Blog list</h2>
-        <div>{ this.state.blogs.map(blog => <Blog blog={blog} key={blog._id} /> ) }</div>
+        <div>{ this.state.blogs
+          .map(blog => <Blog blog={blog} key={blog._id} /> )
+          .sort(blog => blog.likes)
+        }</div>
       </div>
     )
 

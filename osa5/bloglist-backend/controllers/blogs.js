@@ -132,4 +132,32 @@ blogRouter.put('/:id', async (request, response) => {
   }
 })
 
+blogRouter.put('/:id/like', async (request, response) => {
+  try {
+    const token = request.token
+    const decodedToken = jwt.verify(request.token, process.env.SECRET)
+
+    if (!token || !decodedToken.id)
+      return response.status(401).json({ error: 'token missing or invalid' })
+
+    const user = await User.findById(decodedToken.id)
+    if (!user)
+      response.status(403).json({ error: 'user not found' })
+
+    let blog = await Blog.findById(request.params.id)
+    if (!blog)
+      response.status(404).json({ error: 'blog not found' })
+
+    blog.likes = blog.likes ? blog.likes + 1 : 1
+
+    const savedBlog = await blog.save()
+
+    response.status(201).json(savedBlog)
+  }
+  catch (exception) {
+    console.log(exception)
+    response.status(500).json({ error: 'something went wrong...' })
+  }
+})
+
 module.exports = blogRouter
