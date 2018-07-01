@@ -11,9 +11,9 @@ class App extends React.Component {
     super(props)
     this.state = {
       blogs: [],
-      username: '',
-      password: '',
-      user_name: '',
+      user: '',
+      login_password: '',
+      login_username: '',
       blog_title: '',
       blog_author: '',
       blog_url: '',
@@ -31,7 +31,7 @@ class App extends React.Component {
     const user_str = window.localStorage.getItem('current_user')
     if (user_str) {
       const user = JSON.parse(user_str)
-      this.setState({ user_name: user.name })
+      this.setState({ user: user })
       blogService.setToken(user.token)
     }
   }
@@ -40,7 +40,7 @@ class App extends React.Component {
     event.preventDefault()
     window.localStorage.removeItem('current_user')
     this.setState({
-      user_name: '',
+      user: null,
       info: 'User logged out'
     })
     setTimeout(() => {
@@ -52,12 +52,12 @@ class App extends React.Component {
     event.preventDefault()
     try{
       const user = await loginService.login({
-        username: this.state.username,
-        password: this.state.password
+        username: this.state.login_username,
+        password: this.state.login_password,
       })
       window.localStorage.setItem('current_user', JSON.stringify(user))
       this.setState({
-        username:'', password:''
+        login_username:'', login_password:''
       })
     } catch(exception) {
       this.setState({
@@ -118,8 +118,8 @@ class App extends React.Component {
       return (
         <Togglable buttonLabel="Log in" >
           <LoginForm
-            username={this.state.username}
-            password={this.state.password}
+            username={this.state.login_username}
+            password={this.state.login_password}
             handleChange={this.handleLoginFieldChange}
             handleSubmit={this.login}
           />
@@ -149,13 +149,14 @@ class App extends React.Component {
     )
 
 
-    const blogList = () => (
+    const blogList = (user) => (
       <div>
         <h2>Blog list</h2>
-        <div>{ this.state.blogs
-          .map(blog => <Blog blog={blog} key={blog._id} /> )
-          .sort(blog => blog.likes)
-        }</div>
+        <div>
+          { this.state.blogs
+            .map(blog => <Blog blog={blog} user={user} key={blog._id} /> )
+            .sort(blog => blog.likes) }
+        </div>
       </div>
     )
 
@@ -164,11 +165,11 @@ class App extends React.Component {
         <h1>Blogs</h1>
         <Notification message={this.state.error} className='error' />
         <Notification message={this.state.info}  className='message' />
-        { !this.state.user_name
+        { !this.state.user
           ? loginForm()
           : <div>
-              <p>{ this.state.user_name } logged in <button onClick={this.logout}>Logout</button></p>
-              <div>{ blogList() }</div>
+              <p>{ this.state.user.name } logged in <button onClick={this.logout}>Logout</button></p>
+              <div>{ blogList(this.state.user) }</div>
               <div>{ blogForm() }</div>
             </div>
         }

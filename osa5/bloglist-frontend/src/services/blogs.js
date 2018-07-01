@@ -28,6 +28,13 @@ const update = (id, newObject) => {
   return request.then(response => response.data)
 }
 
+const _delete = (id) => {
+  const config = {
+    headers: { 'Authorization': token }
+  }
+  return axios.delete(`${baseUrl}/${id}`, config)
+}
+
 const like = (id) => {
   const config = {
     headers: { 'Authorization': token }
@@ -36,4 +43,4 @@ const like = (id) => {
   return request.then(response => response.data)
 }
 
-export default { getAll, setToken, create, update, like }
+export default { getAll, setToken, create, update, like, _delete }

@@ -36,19 +36,18 @@ blogRouter.delete('/:id', async (request, response) => {
 
     const blog = await Blog.findById(request.params.id)
     if (!blog)
-      response.status(404).end()
+      return response.status(404).end()
 
     const user = await User.findById(decodedToken.id)
-    if (blog.user.toString() === user._id.toString()) {
-      const result = await Blog.findByIdAndRemove(request.params.id)
-      if (result)
-        response.status(204).json(result).end()
-      else
-        response.status(400).json({ error: 'something went wrong...' })
-    }
-    else {
-      response.status(403).json({ error: 'unauthorized' })
-    }
+    if (!user || (blog.user && !(blog.user.toString() === user._id.toString())))
+      return response.status(403).json({ error: 'unauthorized' })
+
+    const result = await Blog.findByIdAndRemove(request.params.id)
+    if (result)
+      response.status(204).json(result).end()
+    else
+      response.status(400).json({ error: 'something went wrong...' })
+
   } catch (exception) {
     console.log(exception)
     response.status(400).send()

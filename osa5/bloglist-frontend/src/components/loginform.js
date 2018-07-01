@@ -11,14 +11,14 @@ const LoginForm = (props) => {
           <input
             value={username}
             onChange={handleChange}
-            name="username"
+            name="login_username"
           />
         </div>
         <div>
           Password
           <input
             type="password"
-            name="password"
+            name="login_password"
             value={password}
             onChange={handleChange}
           />
