@@ -2,6 +2,7 @@
   "name": "lh5-bloglist",
   "version": "0.1.0",
   "private": true,
+  "localStorage":true,
   "dependencies": {
     "axios": "^0.17.1",
     "prop-types": "^15.6.2",

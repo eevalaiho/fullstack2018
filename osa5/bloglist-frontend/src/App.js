@@ -21,19 +21,21 @@ class App extends React.Component {
       info: '',
       error: ''
     }
-    //this.handleLikeClick = this.handleLikeClick.bind(this);
   }
 
   componentDidMount() {
-    blogService.getAll().then(blogs =>
-      this.setState({ blogs })
-    )
-
-    const user_str = window.localStorage.getItem('current_user')
-    if (user_str) {
-      const user = JSON.parse(user_str)
-      this.setState({ user: user })
-      blogService.setToken(user.token)
+    try {
+      const user_str = localStorage.getItem('current_user')
+      if (user_str) {
+        blogService.getAll().then(blogs =>
+          this.setState({blogs})
+        )
+        const user = JSON.parse(user_str)
+        this.setState({user: user})
+        blogService.setToken(user.token)
+      }
+    } catch (exception) {
+      console.log('Something went wrong ...', exception.message)
     }
   }
 

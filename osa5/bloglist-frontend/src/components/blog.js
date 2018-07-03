@@ -18,6 +18,7 @@ class Blog extends React.Component {
   }
 
   render() {
+
     if (!this.state.blog)
       return null
 
@@ -44,7 +45,7 @@ class Blog extends React.Component {
               <button onClick={() => this.props.onLikeClick(blog).then(result => this.setState({ blog: result }))}
                       className="button like">Like</button><br />
             Added by { blog.user ? blog.user.name.toString() : 'Anonymous'}<br />
-            { !blog.user || ( blog.user._id.toString() === this.state.user_id.toString() )
+            { !blog.user || ( blog.user._id.toString() === (this.state.user_id ? this.state.user_id.toString() : '') )
               ? <button onClick={() => this.props.onDeleteClick(blog)} className="button delete">Delete</button>
               : ''}
           </div>

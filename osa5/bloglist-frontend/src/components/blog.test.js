@@ -68,7 +68,7 @@ describe('<Blog />', () => {
     expect(titleAndContent.prop('style')).toHaveProperty('display', 'none');
   })
 
-  it.only('displays content when title is clicked', () => {
+  it('displays content when title is clicked', () => {
     const user = {
       username: 'someusername',
       name: 'Some Name',
@@ -87,7 +87,7 @@ describe('<Blog />', () => {
     //console.log(blogComponent.debug())
 
     const onlyTitleButton = blogComponent.find('.wrapper').children().first().find('.button .title')
-    console.log(onlyTitleButton.debug())
+    //console.log(onlyTitleButton.debug())
 
     onlyTitleButton.simulate('click')
 
@@ -164,4 +164,5 @@ describe('<Blog />', () => {
 
     expect(mockHandler.mock.calls.length).toBe(1)
   })
+
 })
