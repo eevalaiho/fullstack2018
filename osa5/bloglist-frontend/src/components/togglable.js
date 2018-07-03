@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class Togglable extends React.Component {
   constructor(props) {
@@ -9,7 +10,7 @@ class Togglable extends React.Component {
   }
 
   toggleVisibility = () => {
-    this.setState({visible: !this.state.visible})
+    this.setState({ visible: !this.state.visible })
   }
 
   render() {
@@ -19,15 +20,19 @@ class Togglable extends React.Component {
     return (
       <div>
         <div style={hideWhenVisible}>
-          <button onClick={this.toggleVisibility}>{this.props.buttonLabel}</button>
+          <button onClick={ this.toggleVisibility }>{ this.props.buttonLabel }</button>
         </div>
         <div style={showWhenVisible}>
-          {this.props.children}
-          <button onClick={this.toggleVisibility}>Cancel</button>
+          { this.props.children }
+          <button onClick={ this.toggleVisibility }>Cancel</button>
         </div>
       </div>
     )
   }
+}
+
+Togglable.propTypes = {
+  buttonLabel: PropTypes.string.isRequired
 }
 
 export default Togglable

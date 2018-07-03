@@ -21,6 +21,7 @@ class App extends React.Component {
       info: '',
       error: ''
     }
+    //this.handleLikeClick = this.handleLikeClick.bind(this);
   }
 
   componentDidMount() {
@@ -112,6 +113,35 @@ class App extends React.Component {
     this.setState({ [event.target.name]: event.target.value })
   }
 
+  handleLikeClick = async (blog) => {
+    return await blogService
+      .like(blog._id)
+      .then(response => {
+        const updatedBlog = blog
+        updatedBlog.likes = response.likes
+        this.setState({
+          blogs: this.state.blogs
+            .filter(b => !(b._id === blog._id))
+            .concat(updatedBlog)
+            .sort((a,b) => a.likes > b.likes)
+        })
+        return updatedBlog
+      })
+  }
+
+  handleDeleteClick = async (blog) => {
+    if (window.confirm('Really delete \'' + blog.title +'\' by ' + blog.author + '?')) {
+      await blogService
+        ._delete(blog._id)
+        .then(() => {
+          this.setState({
+            blogs: this.state.blogs
+              .filter(b => !(b._id === blog._id))
+          })
+        })
+    }
+  }
+
   render() {
 
     const loginForm = () => {
@@ -148,14 +178,16 @@ class App extends React.Component {
       </div>
     )
 
-
     const blogList = (user) => (
       <div>
         <h2>Blog list</h2>
         <div>
           { this.state.blogs
-            .map(blog => <Blog blog={blog} user={user} key={blog._id} /> )
-            .sort(blog => blog.likes) }
+            .sort((a, b) => b.likes > a.likes)
+            .map(blog => <Blog key={blog._id} blog={blog} user={user}
+                               onLikeClick={this.handleLikeClick}
+                               onDeleteClick={this.handleDeleteClick} /> )
+          }
         </div>
       </div>
     )

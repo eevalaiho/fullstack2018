@@ -150,8 +150,7 @@ blogRouter.put('/:id/like', async (request, response) => {
     blog.likes = blog.likes ? blog.likes + 1 : 1
 
     const savedBlog = await blog.save()
-
-    response.status(201).json(savedBlog)
+    response.status(200).json(Blog.format(savedBlog))
   }
   catch (exception) {
     console.log(exception)

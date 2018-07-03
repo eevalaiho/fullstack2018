@@ -1,47 +1,27 @@
 import React from 'react'
-import ReactDOM from 'react'
-import blogService from "../services/blogs";
+import PropTypes from "prop-types";
 
 class Blog extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      visible: false
+      visible: false,
+      blog: this.props.blog,
+      user_id: this.props.user._id
     }
-    this.blog = this.props.blog
-    this.user = this.props.user
+    this.onLikeClick = this.props.onLikeClick
+    this.onDeleteClick = this.props.onDeleteClick
   }
 
   toggleVisibility = () => {
     this.setState({visible: !this.state.visible})
   }
 
-  likeBlog = async () => {
-    this.blog = await blogService
-      .like(this.blog._id)
-    setTimeout(() => {
-      this.forceUpdate()}, 100)
-  }
-
-  deleteBlog = async () => {
-    if (window.confirm('Really delete \'' + this.blog.title +'\' by ' + this.blog.author + '?')) {
-      await blogService
-        ._delete(this.blog._id)
-        .then(() => {
-          this.blog = null
-        })
-      setTimeout(() => {
-        this.forceUpdate()}, 100)
-    }
-  }
-
   render() {
-    if (!this.blog)
+    if (!this.state.blog)
       return null
 
-    console.log(this.blog.user)
-    console.log(this.user)
-
+    const blog = this.state.blog
     const hideWhenVisible = {display: this.state.visible ? 'none' : ''}
     const showWhenVisible = {display: this.state.visible ? '' : 'none'}
     const blogStyle = {
@@ -52,18 +32,20 @@ class Blog extends React.Component {
       marginBottom: 5
     }
     return (
-      <div style={blogStyle}>
+      <div style={blogStyle} className="wrapper" ref={this.ref}>
         <div style={hideWhenVisible}>
-          <a onClick={this.toggleVisibility}>{this.blog.title} {this.blog.author}</a>
+          <a onClick={this.toggleVisibility} className="button title">{blog.title} {blog.author}</a>
         </div>
         <div style={showWhenVisible}>
-          <a onClick={this.toggleVisibility}>{this.blog.title} {this.blog.author}</a>
-          <div>
-            <a href={this.blog.url}>{this.blog.url}</a><br/>
-            {this.blog.likes} likes <button onClick={this.likeBlog}>Like</button><br />
-            Added by { this.blog.user ? this.blog.user.name.toString() : 'Anonymous'}<br />
-            { !this.blog.user || ( this.blog.user._id.toString() === this.user._id.toString() )
-              ? <button onClick={this.deleteBlog}>Delete</button>
+          <a onClick={this.toggleVisibility} className="button title">{blog.title} {blog.author}</a>
+          <div className="content">
+            <a href={blog.url} className="url">{blog.url}</a><br/>
+            <span className="likes">{blog.likes}</span> likes
+              <button onClick={() => this.props.onLikeClick(blog).then(result => this.setState({ blog: result }))}
+                      className="button like">Like</button><br />
+            Added by { blog.user ? blog.user.name.toString() : 'Anonymous'}<br />
+            { !blog.user || ( blog.user._id.toString() === this.state.user_id.toString() )
+              ? <button onClick={() => this.props.onDeleteClick(blog)} className="button delete">Delete</button>
               : ''}
           </div>
         </div>
@@ -71,5 +53,11 @@ class Blog extends React.Component {
     )
   }
 }
+
+Blog.propTypes = {
+  user: PropTypes.object.isRequired,
+  blog: PropTypes.object.isRequired
+}
+
 
 export default Blog
