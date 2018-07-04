@@ -1,11 +1,12 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { createAnecdote } from './../reducers/anecdoteReducer'
 
 class AnecdoteForm extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    this.props.store.dispatch(createAnecdote(e.target.content.value))
+    this.context.store.dispatch(createAnecdote(e.target.content.value))
     e.target.content.value = ''
   }
 
@@ -20,6 +21,10 @@ class AnecdoteForm extends React.Component {
       </div>
     )
   }
+}
+
+AnecdoteForm.contextTypes = {
+  store: PropTypes.object
 }
 
 export default AnecdoteForm
