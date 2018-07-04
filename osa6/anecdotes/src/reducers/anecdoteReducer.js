@@ -28,6 +28,8 @@ const anecdoteReducer = (store = initialState, action) => {
       return [...old, { ...voted, votes: voted.votes+1} ]
     case 'CREATE':
       return [...store, { content: action.data.content, id: getId(), votes:0 }]
+    case 'FILTER':
+      return store.filter(a => a.content.toLowerCase().includes(action.data.text.toLowerCase()))
     default:
   }
   return store
@@ -48,6 +50,13 @@ export const voteAnecdote = (id) => {
   return {
     type: 'VOTE',
     data: { id }
+  }
+}
+
+export const filterAnecdotes = (text) => {
+  return {
+    type: 'FILTER',
+    data: { text }
   }
 }
 

@@ -1,5 +1,5 @@
 const notificationReducer = (store = '', action) => {
-  console.log(action)
+  //console.log(action)
   switch (action.type) {
     case 'NOTIFY':
       return action.data.message
@@ -8,11 +8,20 @@ const notificationReducer = (store = '', action) => {
   return store
 }
 
-export const notify = (message) => {
+export const addNotification = (message) => {
   return {
     type: 'NOTIFY',
     data: {
       message: message
+    }
+  }
+}
+
+export const removeNotification = () => {
+  return {
+    type: 'NOTIFY',
+    data: {
+      message: null
     }
   }
 }
