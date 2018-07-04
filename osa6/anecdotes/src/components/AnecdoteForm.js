@@ -1,6 +1,5 @@
 import React from 'react'
 import { createAnecdote } from './../reducers/anecdoteReducer'
-import {voteAnecdote} from "../reducers/anecdoteReducer";
 
 class AnecdoteForm extends React.Component {
 
@@ -10,17 +9,17 @@ class AnecdoteForm extends React.Component {
     e.target.content.value = ''
   }
 
-   render() {
-     return (
-       <div>
-      <h2>create new</h2>
+  render() {
+    return (
+      <div>
+        <h2>create new</h2>
         <form onSubmit={this.handleSubmit}>
           <div><input name='content'/></div>
           <button>create</button>
         </form>
       </div>
-     )
-   }
+    )
+  }
 }
 
 export default AnecdoteForm

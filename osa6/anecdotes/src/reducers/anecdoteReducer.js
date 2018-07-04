@@ -20,7 +20,7 @@ const asObject = (anecdote) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 const anecdoteReducer = (store = initialState, action) => {
-  console.log(action)
+  //console.log(action)
   switch (action.type) {
     case 'VOTE':
       const old = store.filter(a => a.id !==action.data.id)
