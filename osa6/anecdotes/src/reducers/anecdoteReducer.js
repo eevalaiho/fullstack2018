@@ -1,3 +1,5 @@
+import {addNotification, removeNotification} from "./notificationReducer";
+
 const anecdotesAtStart = [
   'If it hurts, do it more often',
   'Adding manpower to a late software project makes it later!',
@@ -20,7 +22,7 @@ const asObject = (anecdote) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 const anecdoteReducer = (store = initialState, action) => {
-  //console.log(action)
+  console.log(action)
   switch (action.type) {
     case 'VOTE':
       const old = store.filter(a => a.id !==action.data.id)
@@ -28,12 +30,25 @@ const anecdoteReducer = (store = initialState, action) => {
       return [...old, { ...voted, votes: voted.votes+1} ]
     case 'CREATE':
       return [...store, { content: action.data.content, id: getId(), votes:0 }]
-    case 'FILTER':
-      return store.filter(a => a.content.toLowerCase().includes(action.data.text.toLowerCase()))
+    //case 'FILTER':
+      //return store.filter(a => a.content.toLowerCase().includes(action.data.text.toLowerCase()))
     default:
   }
   return store
 }
+
+const handleVote = (e, anecdote) => {
+  e.preventDefault()
+  if (anecdote) {
+    this.context.store.dispatch(voteAnecdote(anecdote.id))
+    this.context.store.dispatch(
+      addNotification('You voted for \'' + anecdote.content + '\''))
+    setTimeout(() => {
+      this.context.store.dispatch(removeNotification())
+    }, 5000)
+  }
+}
+
 
 export const createAnecdote = (content) => {
   return {
@@ -50,13 +65,6 @@ export const voteAnecdote = (id) => {
   return {
     type: 'VOTE',
     data: { id }
-  }
-}
-
-export const filterAnecdotes = (text) => {
-  return {
-    type: 'FILTER',
-    data: { text }
   }
 }
 

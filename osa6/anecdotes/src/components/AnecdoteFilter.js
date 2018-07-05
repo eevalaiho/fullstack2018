@@ -1,19 +1,25 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { filterAnecdotes } from './../reducers/anecdoteReducer'
+import { addFilter } from './../reducers/filterReducer'
 
 class AnecdoteFilter extends React.Component {
 
   handleChange = (e) => {
     //console.log(e.target.value)
-    this.context.store.dispatch(filterAnecdotes(e.target.value))
+    this.context.store.dispatch(addFilter(e.target.value))
   }
 
   render() {
-    return (<div>
-      Filter:
-      <input onChange={this.handleChange}></input>
-    </div>)
+    const style = {
+      marginBottom: 10
+    }
+
+    return (
+      <div style={style}>
+        Filter:
+        <input onChange={this.handleChange}></input>
+      </div>
+    )
   }
 }
 

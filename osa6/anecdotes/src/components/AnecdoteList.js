@@ -1,13 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AnecdoteFilter from './AnecdoteFilter'
+import Anecdote from './Anecdote'
 import { voteAnecdote } from './../reducers/anecdoteReducer'
 import { addNotification, removeNotification } from './../reducers/notificationReducer'
 
 class AnecdoteList extends React.Component {
 
-  handleVote = (e, anecdote) => {
-    e.preventDefault()
+  voteAnecdote = (anecdote) => {
+    console.log(anecdote)
     if (anecdote) {
       this.context.store.dispatch(voteAnecdote(anecdote.id))
       this.context.store.dispatch(
@@ -26,15 +27,7 @@ class AnecdoteList extends React.Component {
         <h2>Anecdotes</h2>
         <AnecdoteFilter />
         {anecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
-          <div key={anecdote.id}>
-            <div>
-              {anecdote.content}
-            </div>
-            <div>
-              Has {anecdote.votes}
-              <button onClick={(e) => this.handleVote(e, anecdote)}>Vote</button>
-            </div>
-          </div>
+          <Anecdote key={anecdote.id} anecdote={anecdote} handleVote={() => this.voteAnecdote(anecdote)} />
         )}
       </div>
     )
