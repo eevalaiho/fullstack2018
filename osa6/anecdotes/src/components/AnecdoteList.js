@@ -3,15 +3,18 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import Filter from './Filter'
 import Anecdote from './Anecdote'
-import { voteAnecdote } from './../reducers/anecdoteReducer'
+import { modifyAnecdote } from './../reducers/anecdoteReducer'
 import { addNotification, removeNotification } from './../reducers/notificationReducer'
+import anecdoteService from '../services/anecdotes'
 
 const AnecdoteList = (props) => {
 
-  const handleVote = (anecdote) => {
+  const handleVote = async (anecdote) => {
     //console.log(anecdote)
     if (anecdote) {
-      props.voteAnecdote(anecdote.id)
+      anecdote.votes = anecdote.votes + 1
+      await anecdoteService.update(anecdote)
+        .then(response => props.modifyAnecdote(response.data))
       props.addNotification('You voted for \'' + anecdote.content + '\'')
       setTimeout(() => {
         props.removeNotification()
@@ -49,5 +52,5 @@ AnecdoteList.contextTypes = {
 
 export default connect(
   mapStateToProps,
-  {voteAnecdote, addNotification, removeNotification}
+  {modifyAnecdote, addNotification, removeNotification}
 )(AnecdoteList)
