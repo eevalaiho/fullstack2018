@@ -1,4 +1,3 @@
-import {addNotification, removeNotification} from "./notificationReducer";
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -22,7 +21,7 @@ const asObject = (anecdote) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 const anecdoteReducer = (store = initialState, action) => {
-  console.log(action)
+  //console.log(action)
   switch (action.type) {
     case 'VOTE':
       const old = store.filter(a => a.id !==action.data.id)
@@ -34,19 +33,6 @@ const anecdoteReducer = (store = initialState, action) => {
   }
   return store
 }
-
-const handleVote = (e, anecdote) => {
-  e.preventDefault()
-  if (anecdote) {
-    this.context.store.dispatch(voteAnecdote(anecdote.id))
-    this.context.store.dispatch(
-      addNotification('You voted for \'' + anecdote.content + '\''))
-    setTimeout(() => {
-      this.context.store.dispatch(removeNotification())
-    }, 5000)
-  }
-}
-
 
 export const createAnecdote = (content) => {
   return {

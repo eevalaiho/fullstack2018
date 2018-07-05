@@ -1,60 +1,53 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import AnecdoteQuery from './AnecdoteQuery'
+import Filter from './Filter'
 import Anecdote from './Anecdote'
 import { voteAnecdote } from './../reducers/anecdoteReducer'
 import { addNotification, removeNotification } from './../reducers/notificationReducer'
 
-class AnecdoteList_internal extends React.Component {
+const AnecdoteList = (props) => {
 
-  voteAnecdote = (anecdote) => {
-    console.log(anecdote)
+  const handleVote = (anecdote) => {
+    //console.log(anecdote)
     if (anecdote) {
-      this.context.store.dispatch(voteAnecdote(anecdote.id))
-      this.context.store.dispatch(
-        addNotification('You voted for \'' + anecdote.content + '\''))
+      props.voteAnecdote(anecdote.id)
+      props.addNotification('You voted for \'' + anecdote.content + '\'')
       setTimeout(() => {
-        this.context.store.dispatch(removeNotification())
+        props.removeNotification()
       }, 5000)
     }
   }
 
-  render() {
+  return (
+    <div>
+      <h2>Anecdotes</h2>
+      <Filter />
+      {props.anecdotesToShow.map(anecdote =>
+        <Anecdote key={anecdote.id} anecdote={anecdote}
+                  handleVote={() => handleVote(anecdote)} />
+      )}
+    </div>
+  )
+}
 
-    const anecdotesToShow = () => {
-      const {anecdotes, query} = this.props
-      return anecdotes
-        .filter(a => a.content.toLowerCase().includes(query.toLowerCase()))
-        .sort((a, b) => b.votes - a.votes)
-    }
-
-    //console.log(anecdotes)
-    return (
-      <div>
-        <h2>Anecdotes</h2>
-        <AnecdoteQuery />
-        {anecdotesToShow().map(anecdote =>
-          <Anecdote key={anecdote.id} anecdote={anecdote} handleVote={() => this.voteAnecdote(anecdote)} />
-        )}
-      </div>
-    )
-  }
+const getAnecdotesToShow = (anecdotes, filter) => {
+  return anecdotes
+    .filter(a => a.content.toLowerCase().includes(filter.toLowerCase()))
+    .sort((a, b) => b.votes - a.votes)
 }
 
 const mapStateToProps = (state) => {
   return {
-    anecdotes: state.anecdotes,
-    query: state.query
+    anecdotesToShow: getAnecdotesToShow(state.anecdotes, state.filter)
   }
 }
 
-const AnecdoteList = connect(
-  mapStateToProps
-)(AnecdoteList_internal)
-
-AnecdoteList_internal.contextTypes = {
+AnecdoteList.contextTypes = {
   store: PropTypes.object
 }
 
-export default AnecdoteList
+export default connect(
+  mapStateToProps,
+  {voteAnecdote, addNotification, removeNotification}
+)(AnecdoteList)

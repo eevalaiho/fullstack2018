@@ -5,12 +5,12 @@ import { Provider } from 'react-redux'
 import App from './App'
 import anecdoteReducer from './reducers/anecdoteReducer'
 import notificationReducer from './reducers/notificationReducer'
-import queryReducer from './reducers/queryReducer'
+import filterReducer from './reducers/filterReducer'
 
 const reducer = combineReducers({
   anecdotes: anecdoteReducer,
   notification: notificationReducer,
-  query: queryReducer
+  filter: filterReducer
 })
 
 const store = createStore(reducer)
