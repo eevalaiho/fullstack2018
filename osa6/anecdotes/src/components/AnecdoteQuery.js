@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { addFilter } from './../reducers/filterReducer'
+import { addQuery } from './../reducers/queryReducer'
 
-class AnecdoteFilter extends React.Component {
+class AnecdoteQuery extends React.Component {
 
   handleChange = (e) => {
     //console.log(e.target.value)
-    this.context.store.dispatch(addFilter(e.target.value))
+    this.context.store.dispatch(addQuery(e.target.value))
   }
 
   render() {
@@ -16,15 +16,15 @@ class AnecdoteFilter extends React.Component {
 
     return (
       <div style={style}>
-        Filter:
+        Query:
         <input onChange={this.handleChange}></input>
       </div>
     )
   }
 }
 
-AnecdoteFilter.contextTypes = {
+AnecdoteQuery.contextTypes = {
   store: PropTypes.object
 }
 
-export default AnecdoteFilter
+export default AnecdoteQuery
