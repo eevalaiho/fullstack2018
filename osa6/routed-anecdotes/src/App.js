@@ -1,10 +1,11 @@
 import React from 'react'
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
 const Menu = () => (
-  <div>    
-    <a href='#'>anecdotes</a>&nbsp;
-    <a href='#'>create new</a>&nbsp;
-    <a href='#'>about</a>&nbsp;
+  <div>
+    <Link to="/">anecdotes</Link>&nbsp;
+    <Link to="/create">create new</Link>&nbsp;
+    <Link to="/about">about</Link>
   </div>
 )
 
@@ -12,7 +13,8 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote =>
+        <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
     </ul>  
   </div>
 )
@@ -31,11 +33,20 @@ const About = () => (
   </div>
 )
 
+const Anecdote = ({anecdote}) => {
+  return(
+    <div>
+      <h2>{anecdote.content}</h2>
+      <div>by {anecdote.author}</div>
+      <div>has {anecdote.votes} votes</div>
+      <div>for more info see <a href={anecdote.info}>{anecdote.info}</a><br /><br /></div>
+    </div>
+  )}
+
 const Footer = () => (
   <div>
     Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
-
-    See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code. 
+    See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code.
   </div>
 )
 
@@ -138,12 +149,19 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h1>Software anecdotes</h1>
-          <Menu />
-          <AnecdoteList anecdotes={this.state.anecdotes} />
-          <About />      
-          <CreateNew addNew={this.addNew}/>
-        <Footer />
+        <Router>
+          <div>
+            <h1>Software anecdotes</h1>
+            <Menu />
+            <Route exact path="/" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
+            <Route exact path="/about" render={() => <About />}/>
+            <Route exact path="/create" render={() => <CreateNew addNew={this.addNew}/>} />
+            <Route exact path="/anecdotes/:id" render={({match}) =>
+              <Anecdote anecdote={this.anecdoteById(match.params.id)} />}
+            />
+            <Footer />
+          </div>
+        </Router>
       </div>
     );
   }
