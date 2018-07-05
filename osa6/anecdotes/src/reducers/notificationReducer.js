@@ -2,13 +2,13 @@ const notificationReducer = (store = '', action) => {
   //console.log(action)
   switch (action.type) {
     case 'NOTIFY':
-      return action.data.message
+      return action.message
     default:
   }
   return store
 }
-
-export const addNotification = (message) => {
+/*
+const addNotification = (message) => {
   return {
     type: 'NOTIFY',
     data: {
@@ -17,12 +17,27 @@ export const addNotification = (message) => {
   }
 }
 
-export const removeNotification = () => {
+const removeNotification = () => {
   return {
     type: 'NOTIFY',
     data: {
       message: null
     }
+  }
+}
+*/
+export const notify = (message,seconds) => {
+  return async (dispatch) => {
+    dispatch({
+      type: 'NOTIFY',
+      message
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'NOTIFY',
+        message: null
+      })
+    }, seconds*1000)
   }
 }
 

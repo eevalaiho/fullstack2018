@@ -4,22 +4,14 @@ import PropTypes from 'prop-types'
 import Filter from './Filter'
 import Anecdote from './Anecdote'
 import { modifyAnecdote } from './../reducers/anecdoteReducer'
-import { addNotification, removeNotification } from './../reducers/notificationReducer'
-import anecdoteService from '../services/anecdotes'
+import { notify } from './../reducers/notificationReducer'
 
 const AnecdoteList = (props) => {
 
   const handleVote = async (anecdote) => {
-    //console.log(anecdote)
-    if (anecdote) {
-      anecdote.votes = anecdote.votes + 1
-      await anecdoteService.update(anecdote)
-        .then(response => props.modifyAnecdote(response.data))
-      props.addNotification('You voted for \'' + anecdote.content + '\'')
-      setTimeout(() => {
-        props.removeNotification()
-      }, 5000)
-    }
+    anecdote.votes = anecdote.votes + 1
+    props.modifyAnecdote(anecdote)
+    props.notify(`You voted for '${anecdote.content}'`, 5)
   }
 
   return (
@@ -52,5 +44,5 @@ AnecdoteList.contextTypes = {
 
 export default connect(
   mapStateToProps,
-  {modifyAnecdote, addNotification, removeNotification}
+  {modifyAnecdote, notify}
 )(AnecdoteList)
