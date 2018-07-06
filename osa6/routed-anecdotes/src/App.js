@@ -1,35 +1,64 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import {ListGroup, ListGroupItem} from 'react-bootstrap'
+import { BrowserRouter as Router, Route, Link, NavLink, Redirect } from 'react-router-dom'
+import './index.css';
 
-const Menu = () => (
-  <div>
-    <Link to="/">anecdotes</Link>&nbsp;
-    <Link to="/create">create new</Link>&nbsp;
-    <Link to="/about">about</Link>
-  </div>
-)
+const Menu = () => {
+  return (
+    <nav className='top'>
+      <NavLink exact to="/"><span class="glyphicon glyphicon-home"></span></NavLink>
+      <NavLink to="/anecdotes">anecdotes</NavLink>
+      <NavLink exact to="/create">create new</NavLink>
+      <NavLink exact to="/about">about</NavLink>
+    </nav>
+  )
+}
+
+const Notification = ({notification}) => {
+  const style = {
+    color: '#73AD21',
+    'border-radius': '15px',
+    border: '2px solid #73AD21',
+    padding: '20px',
+    fontStyle: 'italic',
+    fontSize: 16
+  }
+  return (
+    notification
+      ? <div style={style}>{notification}</div>
+      : null
+  )}
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
+    <ListGroup>
       {anecdotes.map(anecdote =>
-        <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
-    </ul>  
+        <ListGroupItem key={anecdote.id} href={`/anecdotes/${anecdote.id}`}>{anecdote.content}</ListGroupItem>)}
+    </ListGroup>
   </div>
 )
 
 const About = () => (
-  <div>
-    <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
-    
-    <em>An anecdote is a brief, revealing account of an individual person or an incident. 
-      Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself, 
-      such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative. 
-      An anecdote is "a story with a point."</em>
+  <div class="container">
+    <div class="row">
+      <h2>About anecdote app</h2>
+    </div>
+    <div class="row">
+      <div class="col col-lg-8">
+        <p>According to Wikipedia:</p>
 
-    <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+        <em>An anecdote is a brief, revealing account of an individual person or an incident.
+          Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
+          such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
+          An anecdote is "a story with a point."</em>
+
+        <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
+      </div>
+      <div class="col-lg-4">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Edsger_Wybe_Dijkstra.jpg/250px-Edsger_Wybe_Dijkstra.jpg" />
+      </div>
+    </div>
   </div>
 )
 
@@ -61,7 +90,7 @@ class CreateNew extends React.Component {
   }
 
   handleChange = (e) => {
-    console.log(e.target.name, e.target.value)
+    //console.log(e.target.name, e.target.value)
     this.setState({ [e.target.name]: e.target.value })
   }
 
@@ -100,6 +129,14 @@ class CreateNew extends React.Component {
   }
 }
 
+const Home = () => (
+  <div>
+    <h2>Anecdote app</h2>
+    <p>This is the anecdote app</p>
+  </div>
+)
+
+
 class App extends React.Component {
   constructor() {
     super()
@@ -121,13 +158,26 @@ class App extends React.Component {
           id: '2'
         }
       ],
-      notification: ''
-    } 
+      notification: '',
+      created: false
+    }
   }
 
   addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
-    this.setState({ anecdotes: this.state.anecdotes.concat(anecdote) })
+    this.setState({
+      anecdotes: this.state.anecdotes.concat(anecdote),
+      notification: `a new anecdote '${anecdote.content}' created!`,
+      created: true
+    })
+    setTimeout(() => {
+      console.log(this.state)
+      this.setState({
+        notification: null,
+        created: false
+      })
+      console.log(this.state)
+    }, 5000)
   }
 
   anecdoteById = (id) =>
@@ -153,9 +203,15 @@ class App extends React.Component {
           <div>
             <h1>Software anecdotes</h1>
             <Menu />
-            <Route exact path="/" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
+            <Notification notification={this.state.notification} />
+            <Route exact path="/" render={() => <Home />} />
+            <Route exact path="/anecdotes" render={() => <AnecdoteList anecdotes={this.state.anecdotes} />} />
             <Route exact path="/about" render={() => <About />}/>
-            <Route exact path="/create" render={() => <CreateNew addNew={this.addNew}/>} />
+            <Route path="/create" render={() =>
+              this.state.created
+                ? <Redirect to="/" />
+                : <CreateNew addNew={this.addNew}/>
+            }/>
             <Route exact path="/anecdotes/:id" render={({match}) =>
               <Anecdote anecdote={this.anecdoteById(match.params.id)} />}
             />
