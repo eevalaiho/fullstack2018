@@ -6,7 +6,7 @@ import './index.css';
 const Menu = () => {
   return (
     <nav className='top'>
-      <NavLink exact to="/"><span class="glyphicon glyphicon-home"></span></NavLink>
+      <NavLink exact to="/"><span className="glyphicon glyphicon-home"></span></NavLink>
       <NavLink to="/anecdotes">anecdotes</NavLink>
       <NavLink exact to="/create">create new</NavLink>
       <NavLink exact to="/about">about</NavLink>
@@ -30,22 +30,28 @@ const Notification = ({notification}) => {
   )}
 
 const AnecdoteList = ({ anecdotes }) => (
-  <div>
-    <h2>Anecdotes</h2>
-    <ListGroup>
-      {anecdotes.map(anecdote =>
-        <ListGroupItem key={anecdote.id} href={`/anecdotes/${anecdote.id}`}>{anecdote.content}</ListGroupItem>)}
-    </ListGroup>
+  <div className="container">
+    <div className="row">
+      <h2>Anecdotes</h2>
+    </div>
+    <div className="row">
+      <div className="col-sm-9">
+        <ListGroup>
+          {anecdotes.map(anecdote =>
+            <ListGroupItem key={anecdote.id} href={`/anecdotes/${anecdote.id}`}>{anecdote.content}</ListGroupItem>)}
+        </ListGroup>
+      </div>
+    </div>
   </div>
 )
 
 const About = () => (
-  <div class="container">
-    <div class="row">
+  <div className="container">
+    <div className="row">
       <h2>About anecdote app</h2>
     </div>
-    <div class="row">
-      <div class="col col-lg-8">
+    <div className="row">
+      <div className="col-sm-9">
         <p>According to Wikipedia:</p>
 
         <em>An anecdote is a brief, revealing account of an individual person or an incident.
@@ -55,8 +61,8 @@ const About = () => (
 
         <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
       </div>
-      <div class="col-lg-4">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Edsger_Wybe_Dijkstra.jpg/250px-Edsger_Wybe_Dijkstra.jpg" />
+      <div className="col-sm-3">
+        <img alt="Edsger Dijkstra" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Edsger_Wybe_Dijkstra.jpg/250px-Edsger_Wybe_Dijkstra.jpg" />
       </div>
     </div>
   </div>
@@ -64,19 +70,27 @@ const About = () => (
 
 const Anecdote = ({anecdote}) => {
   return(
-    <div>
-      <h2>{anecdote.content}</h2>
-      <div>by {anecdote.author}</div>
-      <div>has {anecdote.votes} votes</div>
-      <div>for more info see <a href={anecdote.info}>{anecdote.info}</a><br /><br /></div>
+    <div className="container">
+      <div className="row">
+        <h2>{anecdote.content}</h2>
+      </div>
+      <div className="row">
+        <div className="col-sm-9">
+          <div>by {anecdote.author}</div>
+          <div>has {anecdote.votes} votes</div>
+          <div>for more info see <a href={anecdote.info}>{anecdote.info}</a><br /><br /></div>
+        </div>
+      </div>
     </div>
   )}
 
 const Footer = () => (
-  <div>
-    Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
-    See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code.
-  </div>
+  <nav className="navbar navbar-default navbar-fixed-bottom" style={{padding: '10px'}}>
+    <div className="container" style={{width: '100%', 'textAlign': 'center'}}>
+      Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
+      See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code.
+    </div>
+  </nav>
 )
 
 class CreateNew extends React.Component {
@@ -106,33 +120,44 @@ class CreateNew extends React.Component {
 
   render() {
     return(
-      <div>
-        <h2>create a new anecdote</h2>
-        <form onSubmit={this.handleSubmit}>
-          <div>
-            content 
-            <input name='content' value={this.state.content} onChange={this.handleChange} />
+      <div className="container">
+        <div className="row">
+          <h2>Create a new anecdote</h2>
+        </div>
+        <div className="row">
+          <div className="col">
+            <form onSubmit={this.handleSubmit}>
+              <div className="form-group">
+                <label>Content</label>
+                <input className="form-control" name='content' value={this.state.content} onChange={this.handleChange} />
+              </div>
+              <div className="form-group">
+                <label>Author</label>
+                <input className="form-control" name='author' value={this.state.author} onChange={this.handleChange} />
+              </div>
+              <div className="form-group">
+                <label>Url for more info</label>
+                <input className="form-control" name='info' value={this.state.info} onChange={this.handleChange} />
+              </div>
+              <button className="btn btn-default">create</button>
+            </form>
           </div>
-          <div>
-            author
-            <input name='author' value={this.state.author} onChange={this.handleChange} />
-          </div>
-          <div>
-            url for more info
-            <input name='info' value={this.state.info} onChange={this.handleChange} />
-          </div> 
-          <button>create</button>
-        </form>
-      </div>  
+        </div>
+      </div>
     )
-
   }
 }
 
 const Home = () => (
-  <div>
-    <h2>Anecdote app</h2>
-    <p>This is the anecdote app</p>
+  <div className="container">
+    <div className="row">
+      <h2>The software anecdotes app</h2>
+    </div>
+    <div className="row">
+      <div className="col">
+        <p>This is the software anecdote app</p>
+      </div>
+    </div>
   </div>
 )
 
