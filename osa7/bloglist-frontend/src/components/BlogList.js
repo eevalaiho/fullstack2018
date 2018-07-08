@@ -3,19 +3,32 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import Blog from './Blog'
 import {notify} from "../reducers/notificationReducer";
-import {modifyBlog} from "../reducers/blogReducer";
+import {initBlogs, modifyBlog} from "../reducers/blogReducer";
 
-const BlogList = (props) => {
-  return (
-    <div>
-      <h2>Blog list</h2>
+class BlogList extends React.Component{
+
+  componentDidMount() {
+    try {
+      this.props.initBlogs()
+    } catch (exception) {
+      console.log(exception)
+      this.props.notify(`Something went wrong ...`, 5, 'ERROR')
+    }
+  }
+
+  render() {
+    const props = this.props
+    return (
       <div>
-        { props.blogsToShow.map(blog =>
-            <Blog key={blog._id} blog={blog} /> )
-        }
+        <h2>Blog list</h2>
+        <div>
+          { props.blogsToShow.map(blog =>
+              <Blog key={blog._id} blog={blog} /> )
+          }
+        </div>
       </div>
-    </div>
-)}
+    )}
+}
 
 const getBlogsToShow = (blogs) => {
   return blogs
@@ -34,5 +47,5 @@ BlogList.contextTypes = {
 
 export default connect(
   mapStateToProps,
-  {modifyBlog, notify}
+  {modifyBlog, notify, initBlogs}
 )(BlogList)
