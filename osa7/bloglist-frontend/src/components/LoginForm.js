@@ -8,7 +8,6 @@ class LoginForm extends React.Component {
   handleLogin = async (e) => {
     e.preventDefault()
     this.props.login(e.target.username.value,e.target.password.value)
-    //this.props.notify(e.target.username.value+` logged in`, 5)
     e.target.username.value = e.target.password.value = ''
   }
 

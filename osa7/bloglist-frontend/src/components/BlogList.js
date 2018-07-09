@@ -1,9 +1,26 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import Blog from './Blog'
-import {notify} from "../reducers/notificationReducer";
-import {initBlogs, modifyBlog} from "../reducers/blogReducer";
+import { NavLink } from 'react-router-dom'
+import { notify } from "../reducers/notificationReducer";
+import { initBlogs, modifyBlog } from "../reducers/blogReducer";
+
+
+const Blog = (props) => {
+  const {blog} = props
+  return (
+    <div className="wrapper" ref={this.ref}>
+      <div>
+        <h2><NavLink exact to={'/blogs/'+blog._id}>{blog.title}</NavLink></h2>
+        <div>
+          Auhtor: {blog.author}<br />
+          Url: {blog.url}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 
 class BlogList extends React.Component{
 

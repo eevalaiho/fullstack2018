@@ -4,7 +4,7 @@ import LoginForm from './LoginForm'
 import { notify } from '../reducers/notificationReducer'
 import {logout} from '../reducers/authReducer'
 
-const User = (props) => {
+const CurrentUser = (props) => {
   const handleLogout = async (e) => {
     e.preventDefault()
     props.logout()
@@ -30,4 +30,4 @@ const mapStateToProps = (state) => {
 export default connect(
   mapStateToProps,
   { logout, notify }
-)(User)
+)(CurrentUser)

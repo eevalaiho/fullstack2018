@@ -1,79 +1,64 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import PropTypes from "prop-types";
-import {deleteBlog, likeBlog} from '../reducers/blogReducer'
+import {deleteBlog, likeBlog, initBlogs} from '../reducers/blogReducer'
 import {notify} from '../reducers/notificationReducer'
 
-const Blog = (props) => {
+class Blog extends React.Component {
 
-  let hideContent = true
-
-  const {blog, user} = props
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
-  const toggleVisibility = async (e) => {
-    e.preventDefault()
-    hideContent = !hideContent
-    e.target.parentNode.children[1].setAttribute('style', hideContent ? 'display: none' : '')
-  }
-
-  const handleLike = async () => {
-    props.likeBlog(blog)
-  }
-
-  const handleDelete = async () => {
-    if (window.confirm(`Really delete '${blog.title}' by '${blog.author}'?`)) {
-      props.deleteBlog(blog)
-      props.notify(`Blog '${blog.title}' by '${blog.author}' was deleted`, 5)
+  componentDidMount() {
+    try {
+      this.props.initBlogs()
+    } catch (exception) {
+      console.log(exception)
+      this.props.notify(`Something went wrong ...`, 5, 'ERROR')
     }
   }
 
-  const DeleteButton = () => {
-    if (!user || (blog.user && blog.user._id !== user._id))
-      return null
-    return (
-      <button onClick={() => handleDelete()} className="button delete">Delete</button>
-    )
-  }
+  render() {
 
-  return (
-    <div style={blogStyle} className="wrapper" ref={this.ref}>
-      <div>
-        <a onClick={(e) => toggleVisibility(e)} className="button title">{blog.title} {blog.author}</a>
-        <div className="content" style={hideContent ? {display: 'none'} : {}}>
-          <a href={blog.url} className="url">{blog.url}</a><br/>
-          <span className="likes">{blog.likes}</span> likes
-          <button onClick={() => handleLike()} className="button like">Like</button><br/>
-          Added by {blog.user ? (blog.user.name || '').toString() : 'Anonymous'}<br/>
-          <DeleteButton />
+    const {blog, user} = this.props
+
+    const handleLike = async () => {
+      this.props.likeBlog(blog)
+    }
+
+    const handleDelete = async () => {
+      if (window.confirm(`Really delete '${blog.title}' by '${blog.author}'?`)) {
+        this.props.deleteBlog(blog)
+        this.props.notify(`Blog '${blog.title}' by '${blog.author}' was deleted`, 5)
+      }
+    }
+
+    const DeleteButton = () => {
+      if (!user || (blog && blog.user && blog.user._id !== user._id))
+        return null
+      return (
+        <button onClick={() => handleDelete()} className="button delete">Delete</button>
+      )
+    }
+
+    return (
+      <div className="wrapper" ref={this.ref}>
+        <div>
+          <h1>{blog && blog.title} {blog && blog.author}</h1>
+          <div>
+            <a href={blog && blog.url} className="url">{blog && blog.url}</a><br/>
+            <span className="likes">{blog && blog.likes}</span> likes
+            <button onClick={() => handleLike()} className="button like">Like</button><br/>
+            Added by {blog && blog.user ? (blog.user.name || '').toString() : 'Anonymous'}<br/>
+            <DeleteButton/>
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )}
 }
 
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired
-}
-
-Blog.contextTypes = {
-  user: PropTypes.object
-}
-
-const mapStateToProps = (state) => {
-  return {
-    user: state.user || JSON.parse(localStorage.getItem('user'))
-  }
-}
+const mapStateToProps = (state,props) => ({
+  user: state.user || JSON.parse(localStorage.getItem('currentuser')),
+  blog: state.blogs.find(b => b._id === props.id)
+})
 
 export default connect(
   mapStateToProps,
-  {deleteBlog, likeBlog, notify}
+  {deleteBlog, likeBlog, notify, initBlogs}
 )(Blog)

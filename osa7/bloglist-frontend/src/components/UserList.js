@@ -1,8 +1,22 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import User from './User'
-import {initUsers} from "../reducers/userReducer";
+import { NavLink } from 'react-router-dom'
+import { initUsers } from "../reducers/userReducer";
+
+const User = (props) => {
+  const {user} = props
+  return (
+    <div className="wrapper" ref={this.ref}>
+      <div>
+        <h2><NavLink exact to={'/users/'+user._id}>{user.name}</NavLink></h2>
+        <div>
+          Username: {user.username}<br />
+          Blogs: {user.blogs ? user.blogs.length : 0}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 class UserList extends React.Component {
 
@@ -16,17 +30,15 @@ class UserList extends React.Component {
   }
 
   render() {
-    const props = this.props
-    console.log('blogsToShow:', props.blogsToShow)
-
     return (
       <div>
-        <h2>User list</h2>
-        <div>
-          {props.usersToShow.map(user =>
-            <User key={user._id} user={user}/>)
+        <ul>
+          {this.props.usersToShow.map(user =>
+            <li key={user._id} >
+              <User key={user._id} user={user}/>
+            </li>)
           }
-        </div>
+        </ul>
       </div>
     )
   }
@@ -36,10 +48,6 @@ const mapStateToProps = (state) => {
   return {
     usersToShow: state.users
   }
-}
-
-UserList.contextTypes = {
-  store: PropTypes.object
 }
 
 export default connect(
